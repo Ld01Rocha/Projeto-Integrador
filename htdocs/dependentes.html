@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaHealth - Gerenciar Dependentes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #114b5f 0%, #1a936f 100%);
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            text-align: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: #88d498;
+        }
+        
+        .user-info {
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #88d498;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 30px;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-menu li {
+            padding: 12px 20px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-menu li i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .nav-menu li:hover, .nav-menu li.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #88d498;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .page-title {
+            font-size: 24px;
+            color: #114b5f;
+            display: flex;
+            align-items: center;
+        }
+        
+        .back-link {
+            margin-right: 15px;
+            color: #1a936f;
+            font-size: 20px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background-color: #e6f7f0;
+            transform: translateX(-3px);
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: #f5f7fa;
+            border-radius: 20px;
+            padding: 5px 15px;
+            width: 300px;
+        }
+        
+        .search-bar input {
+            border: none;
+            background: transparent;
+            padding: 8px;
+            width: 100%;
+            outline: none;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-bell {
+            position: relative;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+        
+        .card-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #114b5f;
+        }
+        
+        /* Content Box */
+        .content-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .content-title {
+            font-size: 18px;
+            color: #114b5f;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #114b5f 0%, #1a936f 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 147, 111, 0.4);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #1a936f;
+            color: #1a936f;
+        }
+        
+        /* Form */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #1a936f;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(26, 147, 111, 0.2);
+        }
+        
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            color: #114b5f;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background-color: #e6f7f0;
+            color: #1a936f;
+        }
+        
+        .status-inactive {
+            background-color: #fef0f0;
+            color: #e74c3c;
+        }
+        
+        .status-pending {
+            background-color: #fef7e6;
+            color: #f39c12;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            color: #114b5f;
+            font-size: 16px;
+        }
+        
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        .filter-group label {
+            margin-right: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            color: #777;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid #1a936f;
+            color: #114b5f;
+            font-weight: bold;
+        }
+        
+        /* Dependent Card */
+        .dependent-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .dependent-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+        
+        .dependent-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .dependent-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #88d498;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .dependent-info h3 {
+            color: #114b5f;
+            margin-bottom: 5px;
+        }
+        
+        .dependent-info p {
+            color: #777;
+            font-size: 14px;
+        }
+        
+        .dependent-details {
+            margin-bottom: 15px;
+        }
+        
+        .detail-item {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        
+        .detail-label {
+            min-width: 120px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .dependent-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                overflow: visible;
+            }
+            
+            .sidebar .logo h1, .sidebar .user-info, .sidebar .nav-menu li span {
+                display: none;
+            }
+            
+            .sidebar .nav-menu {
+                text-align: center;
+            }
+            
+            .sidebar .nav-menu li i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-bar {
+                width: 100%;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .dependent-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container"><!-- Sidebar -->
+<div class="sidebar">
+<div class="logo">
+<h1>Care<span>Alert</span></h1>
+</div>
+<div class="user-info">
+<div class="user-avatar"><i class="fas fa-user"></i></div>
+<h3>Carlos Silva</h3>
+<p>Cuidador</p>
+</div>
+<ul class="nav-menu">
+<li class="active"><a href="PaginaInicialCuidador.html"> <i class="fas fa-home"></i> <span>Dashboard</span> </a></li>
+<li><a href="medicamento.html"> <i class="fas fa-pills"></i> <span>Medicamentos</span> </a></li>
+<li><a href="dependentes.html"> <i class="fas fa-users"></i> <span>Dependentes</span> </a></li>
+<li><a href="alerta.html"> <i class="fas fa-bell"></i> <span>Alertas</span> </a></li>
+<li><a href="historico.html"> <i class="fas fa-history"></i> <span>Histórico</span> </a></li>
+<li><a href="configuracoes.html"> <i class="fas fa-cog"></i> <span>Configurações</span> </a></li>
+<li><a href="index.php"> <i class="fas fa-sign-out-alt"></i> <span>Sair</span> </a></li>
+</ul>
+</div>
+<!-- Main Content -->
+<div class="main-content">
+<div class="header">
+<h2 class="page-title"><a href="dashboard.html" class="back-link" title="Voltar para o Dashboard"> <i class="fas fa-arrow-left"></i> </a> Gerenciar Dependentes</h2>
+<div class="search-bar"><i class="fas fa-search"></i> <input type="text" placeholder="Pesquisar dependente..." /></div>
+<div class="user-actions">
+<div class="notification-bell"><i class="fas fa-bell"></i> <span class="notification-badge">3</span></div>
+<div class="user-name">Carlos Silva</div>
+</div>
+</div>
+<!-- Dashboard Cards -->
+<div class="dashboard-cards">
+<div class="card">
+<div class="card-icon" style="background-color: #e6f7f0; color: #1a936f;"><i class="fas fa-users"></i></div>
+<div class="card-title">Total de Dependentes</div>
+<div class="card-value">2</div>
+</div>
+<div class="card">
+<div class="card-icon" style="background-color: #e6f3ff; color: #3498db;"><i class="fas fa-bell"></i></div>
+<div class="card-title">Alertas Ativos</div>
+<div class="card-value">3</div>
+</div>
+<div class="card">
+<div class="card-icon" style="background-color: #fef0f0; color: #e74c3c;"><i class="fas fa-exclamation-circle"></i></div>
+<div class="card-title">Alertas Críticos</div>
+<div class="card-value">1</div>
+</div>
+<div class="card">
+<div class="card-icon" style="background-color: #fff7e6; color: #f39c12;"><i class="fas fa-map-marker-alt"></i></div>
+<div class="card-title">Dispositivos Ativos</div>
+<div class="card-value">2</div>
+</div>
+</div>
+<!-- Formulário de Cadastro de Dependente -->
+<div class="content-box">
+<div class="content-header">
+<h3 class="content-title">Cadastrar Novo Dependente</h3>
+</div>
+<form id="dependent-form">
+<div class="form-row">
+<div class="form-group"><label for="dependent-name">Nome Completo</label> <input type="text" id="dependent-name" placeholder="Ex: Maria Silva" /></div>
+<div class="form-group"><label for="dependent-relationship">Parentesco</label><select id="dependent-relationship">
+<option value="">Selecione o parentesco</option>
+<option value="pai">Pai</option>
+<option value="mae">Mãe</option>
+<option value="filho">Filho(a)</option>
+<option value="avo">Avô/Avó</option>
+<option value="outro">Outro</option>
+</select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label for="dependent-birthdate">Data de Nascimento</label> <input type="date" id="dependent-birthdate" /></div>
+<div class="form-group"><label for="dependent-condition">Condição de Saúde</label><select id="dependent-condition">
+<option value="">Selecione a condição</option>
+<option value="alzheimer">Alzheimer</option>
+<option value="parkinson">Parkinson</option>
+<option value="mobilidade">Mobilidade Reduzida</option>
+<option value="visao">Deficiência Visual</option>
+<option value="audicao">Deficiência Auditiva</option>
+<option value="outra">Outra Condição</option>
+</select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label for="dependent-device">Dispositivo de Alerta</label><select id="dependent-device">
+<option value="">Selecione o dispositivo</option>
+<option value="pulseira">Pulseira de Alerta</option>
+<option value="colar">Colar de Alerta</option>
+<option value="relogio">Relógio Inteligente</option>
+<option value="outro">Outro Dispositivo</option>
+</select></div>
+<div class="form-group"><label for="dependent-device-id">ID do Dispositivo</label> <input type="text" id="dependent-device-id" placeholder="Ex: ALERT-1234" /></div>
+</div>
+<div class="form-group"><label for="dependent-notes">Observações</label> <textarea id="dependent-notes" rows="3" placeholder="Informações adicionais sobre o dependente"></textarea></div>
+<button type="button" class="btn" onclick="addDependent()"> <i class="fas fa-plus"></i> Cadastrar Dependente </button></form></div>
+<!-- Lista de Dependentes -->
+<div class="content-box">
+<div class="content-header">
+<h3 class="content-title">Meus Dependentes</h3>
+<div class="filters">
+<div class="filter-group"><label for="filter-condition">Filtrar por:</label><select id="filter-condition">
+<option value="all">Todas as condições</option>
+<option value="alzheimer">Alzheimer</option>
+<option value="parkinson">Parkinson</option>
+<option value="mobilidade">Mobilidade Reduzida</option>
+<option value="visao">Deficiência Visual</option>
+<option value="audicao">Deficiência Auditiva</option>
+</select></div>
+<button class="btn" onclick="applyFilters()"> <i class="fas fa-filter"></i> Aplicar Filtros </button></div>
+</div>
+<div class="dependent-cards" id="dependents-list"><!-- Cartões de dependentes serão gerados aqui pelo JavaScript --></div>
+</div>
+</div>
+</div>
+<!-- Modal para editar dependente -->
+<div class="modal" id="edit-dependent-modal">
+<div class="modal-content"><span class="close-modal" onclick="closeModal('edit-dependent-modal')">×</span>
+<h2 style="margin-bottom: 20px;">Editar Dependente</h2>
+<form id="edit-dependent-form"><input type="hidden" id="edit-dependent-id" />
+<div class="form-row">
+<div class="form-group"><label for="edit-dependent-name">Nome Completo</label> <input type="text" id="edit-dependent-name" /></div>
+<div class="form-group"><label for="edit-dependent-relationship">Parentesco</label><select id="edit-dependent-relationship">
+<option value="pai">Pai</option>
+<option value="mae">Mãe</option>
+<option value="filho">Filho(a)</option>
+<option value="avo">Avô/Avó</option>
+<option value="outro">Outro</option>
+</select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label for="edit-dependent-birthdate">Data de Nascimento</label> <input type="date" id="edit-dependent-birthdate" /></div>
+<div class="form-group"><label for="edit-dependent-condition">Condição de Saúde</label><select id="edit-dependent-condition">
+<option value="alzheimer">Alzheimer</option>
+<option value="parkinson">Parkinson</option>
+<option value="mobilidade">Mobilidade Reduzida</option>
+<option value="visao">Deficiência Visual</option>
+<option value="audicao">Deficiência Auditiva</option>
+<option value="outra">Outra Condição</option>
+</select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label for="edit-dependent-device">Dispositivo de Alerta</label><select id="edit-dependent-device">
+<option value="pulseira">Pulseira de Alerta</option>
+<option value="colar">Colar de Alerta</option>
+<option value="relogio">Relógio Inteligente</option>
+<option value="outro">Outro Dispositivo</option>
+</select></div>
+<div class="form-group"><label for="edit-dependent-device-id">ID do Dispositivo</label> <input type="text" id="edit-dependent-device-id" /></div>
+</div>
+<div class="form-group"><label for="edit-dependent-notes">Observações</label> <textarea id="edit-dependent-notes" rows="3"></textarea></div>
+<button type="button" class="btn" onclick="updateDependent()"> <i class="fas fa-save"></i> Salvar Alterações </button></form></div>
+</div>
+<p>
+<script>
+        // Simulação de banco de dados
+        let dependents = [
+            { 
+                id: 1, 
+                name: "Maria Silva", 
+                relationship: "filho", 
+                birthdate: "1995-05-15", 
+                condition: "mobilidade", 
+                device: "pulseira", 
+                deviceId: "ALERT-1234", 
+                notes: "Utiliza cadeira de rodas para locomoção. Precisa de assistência para atividades diárias.",
+                status: "active" 
+            },
+            { 
+                id: 2, 
+                name: "José Silva", 
+                relationship: "pai", 
+                birthdate: "1948-11-23", 
+                condition: "alzheimer", 
+                device: "colar", 
+                deviceId: "ALERT-5678", 
+                notes: "Tendência a se perder. Monitorar constantemente.",
+                status: "active" 
+            }
+        ];
+        
+        // Função para adicionar dependente
+        function addDependent() {
+            const name = document.getElementById('dependent-name').value;
+            const relationship = document.getElementById('dependent-relationship').value;
+            const birthdate = document.getElementById('dependent-birthdate').value;
+            const condition = document.getElementById('dependent-condition').value;
+            const device = document.getElementById('dependent-device').value;
+            const deviceId = document.getElementById('dependent-device-id').value;
+            
+            if (!name || !relationship || !birthdate || !condition || !device || !deviceId) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+            
+            // Adicionar à lista (simulando integração com banco de dados)
+            const newDependent = {
+                id: dependents.length + 1,
+                name,
+                relationship,
+                birthdate,
+                condition,
+                device,
+                deviceId,
+                notes: document.getElementById('dependent-notes').value,
+                status: 'active'
+            };
+            
+            dependents.push(newDependent);
+            
+            // Atualizar a lista
+            updateDependentsList();
+            
+            // Limpar formulário
+            document.getElementById('dependent-form').reset();
+            
+            alert('Dependente cadastrado com sucesso!');
+        }
+        
+        // Função para aplicar filtros
+        function applyFilters() {
+            const conditionFilter = document.getElementById('filter-condition').value;
+            
+            // Filtrar dependentes (simulação)
+            let filteredDependents = dependents;
+            
+            if (conditionFilter !== 'all') {
+                filteredDependents = filteredDependents.filter(dep => dep.condition === conditionFilter);
+            }
+            
+            // Atualizar a lista com os resultados filtrados
+            renderDependentsList(filteredDependents);
+        }
+        
+        // Função para abrir modal de edição
+        function openEditModal(id) {
+            const dependent = dependents.find(dep => dep.id === id);
+            
+            if (dependent) {
+                document.getElementById('edit-dependent-id').value = dependent.id;
+                document.getElementById('edit-dependent-name').value = dependent.name;
+                document.getElementById('edit-dependent-relationship').value = dependent.relationship;
+                document.getElementById('edit-dependent-birthdate').value = dependent.birthdate;
+                document.getElementById('edit-dependent-condition').value = dependent.condition;
+                document.getElementById('edit-dependent-device').value = dependent.device;
+                document.getElementById('edit-dependent-device-id').value = dependent.deviceId;
+                document.getElementById('edit-dependent-notes').value = dependent.notes;
+                
+                document.getElementById('edit-dependent-modal').style.display = 'flex';
+            }
+        }
+        
+        // Função para fechar modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Função para atualizar dependente
+        function updateDependent() {
+            const id = parseInt(document.getElementById('edit-dependent-id').value);
+            const name = document.getElementById('edit-dependent-name').value;
+            const relationship = document.getElementById('edit-dependent-relationship').value;
+            const birthdate = document.getElementById('edit-dependent-birthdate').value;
+            const condition = document.getElementById('edit-dependent-condition').value;
+            const device = document.getElementById('edit-dependent-device').value;
+            const deviceId = document.getElementById('edit-dependent-device-id').value;
+            const notes = document.getElementById('edit-dependent-notes').value;
+            
+            if (!name || !relationship || !birthdate || !condition || !device || !deviceId) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+            
+            // Atualizar dependente (simulação)
+            const index = dependents.findIndex(dep => dep.id === id);
+            
+            if (index !== -1) {
+                dependents[index] = {
+                    ...dependents[index],
+                    name,
+                    relationship,
+                    birthdate,
+                    condition,
+                    device,
+                    deviceId,
+                    notes
+                };
+                
+                // Atualizar a lista
+                updateDependentsList();
+                
+                // Fechar modal
+                closeModal('edit-dependent-modal');
+                
+                alert('Dependente atualizado com sucesso!');
+            }
+        }
+        
+        // Função para excluir dependente
+        function deleteDependent(id) {
+            if (confirm('Tem certeza que deseja excluir este dependente?')) {
+                // Excluir dependente (simulação)
+                dependents = dependents.filter(dep => dep.id !== id);
+                
+                // Atualizar a lista
+                updateDependentsList();
+                
+                alert('Dependente excluído com sucesso!');
+            }
+        }
+        
+        // Função para atualizar a lista de dependentes
+        function updateDependentsList() {
+            renderDependentsList(dependents);
+        }
+        
+        // Função para renderizar a lista de dependentes
+        function renderDependentsList(deps) {
+            const container = document.getElementById('dependents-list');
+            container.innerHTML = '';
+            
+            deps.forEach(dep => {
+                const card = document.createElement('div');
+                card.className = 'dependent-card';
+                
+                // Mapear valores para exibição
+                const relationshipMap = {
+                    'pai': 'Pai',
+                    'mae': 'Mãe',
+                    'filho': 'Filho(a)',
+                    'avo': 'Avô/Avó',
+                    'outro': 'Outro'
+                };
+                
+                const conditionMap = {
+                    'alzheimer': 'Alzheimer',
+                    'parkinson': 'Parkinson',
+                    'mobilidade': 'Mobilidade Reduzida',
+                    'visao': 'Deficiência Visual',
+                    'audicao': 'Deficiência Auditiva',
+                    'outra': 'Outra Condição'
+                };
+                
+                const deviceMap = {
+                    'pulseira': 'Pulseira de Alerta',
+                    'colar': 'Colar de Alerta',
+                    'relogio': 'Relógio Inteligente',
+                    'outro': 'Outro Dispositivo'
+                };
+                
+                // Calcular idade a partir da data de nascimento
+                const birthdate = new Date(dep.birthdate);
+                const today = new Date();
+                let age = today.getFullYear() - birthdate.getFullYear();
+                const monthDiff = today.getMonth() - birthdate.getMonth();
+                
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+                    age--;
+                }
+                
+                card.innerHTML = `
+                    <div class="dependent-header">
+                        <div class="dependent-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="dependent-info">
+                            <h3>${dep.name}</h3>
+                            <p>${relationshipMap[dep.relationship]} • ${age} anos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="dependent-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Condição:</span>
+                            <span>${conditionMap[dep.condition]}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Dispositivo:</span>
+                            <span>${deviceMap[dep.device]}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">ID do Dispositivo:</span>
+                            <span>${dep.deviceId}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Observações:</span>
+                            <span>${dep.notes}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="dependent-actions">
+                        <button class="btn btn-outline" onclick="openEditModal(${dep.id})">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn" onclick="deleteDependent(${dep.id})">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // Inicializar a lista de dependentes
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDependentsList();
+        });
+    </script>
+</p>
+</body>
+</html>
